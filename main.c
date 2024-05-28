@@ -1,33 +1,16 @@
-#include "minilibx-linux/mlx.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include "get_next_line/get_next_line.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/28 10:34:15 by shebaz            #+#    #+#             */
+/*   Updated: 2024/05/28 13:12:48 by shebaz           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#define TILE_SIZE 50 // Size of each tile
-#define WINDOWS_HEIGHT 600
-#define WINDOWS_WIDTH 500
-
-
-
-typedef struct s_data
-{
-    void *mlx_ptr;
-    void *win_ptr;
-    void *wall;
-    void *player[3];
-    void *road;
-    void *coins;
-    void *exit;
-    char **map;
-    int tex_width;
-    int tex_height;
-	int x;
-	int y;
-	int coins_nbr;
-	int map_height;
-} t_data;
+#include "so_long.h"
 
 void free_2d_array(char **array, int rows) {
     for (int i = 0; i < rows; ++i) {
@@ -35,10 +18,10 @@ void free_2d_array(char **array, int rows) {
     }
     free(array);
 }
-void clear_data(t_data *data) {
-    if (data->map) {
+void clear_data(t_data *data)
+{
+    if (data->map)
         free_2d_array(data->map, data->map_height);
-    }
     if (data->mlx_ptr) {
         if (data->win_ptr) {
             mlx_destroy_window(data->mlx_ptr, data->win_ptr);
@@ -307,6 +290,7 @@ int main(int ac, char **av)
         return 1;
     }
     width = strlen(str);
+    data->map_width = width;
     height = 1;
     free(str);
 
@@ -315,20 +299,16 @@ int main(int ac, char **av)
         height++;
         free(str);
     }
-
-    data->map_height = height;  // Set map_height after allocating data
-
+    data->map_height = height;
     close(fd);
-
     data->mlx_ptr = mlx_init();
     if (!data->mlx_ptr)
     {
         free(data);
         return 1;
     }
-
     map_2d_array(data, av, width, height);
-    check_arguments(data->map);
+    check_arguments(data,av);
 	data->win_ptr = mlx_new_window(data->mlx_ptr, width * TILE_SIZE, height * TILE_SIZE, "So_long");
     if (!data->win_ptr)
     {
