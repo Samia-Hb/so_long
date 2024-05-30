@@ -6,43 +6,39 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 17:31:38 by shebaz            #+#    #+#             */
-/*   Updated: 2024/05/29 20:04:13 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/05/30 13:22:00 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-void clear_exit(t_data *data)
+void clear_exit(t_data *data)//work
 {
 	clear_data(data, 0);
 	exit(1);
 }
 
-void check_form(t_data *data, char **av)
+void check_form(t_data *data, char **av)//work
 {
     int  fd;
     char *str;
     int  i;
     int  width;
 
-    width = 0;
+    i = 0;
+    width = data->map_width;
     fd = open(av[1], O_RDWR, 0777);
     if (fd == -1)
         clear_exit(data);
-    width = data->map_width;
-    i = 0;
     while (1)
     {
         str = get_next_line(fd);
-        if (!str)
-            break;
-        if (width != ft_strlen(str))
+        if (!str || width != ft_strlen(str))
             break;
         free(str);
         i++;
     }
-    if (str)
-        free(str);
+    free(str);
     close(fd);
     if (i != (data->map_height - 1) || (i == (data->map_height - 1) && ft_strlen(data->map[data->map_height - 1]) != width - 1 && data->map_height != 1))
     {
@@ -52,7 +48,7 @@ void check_form(t_data *data, char **av)
 }
 
 
-void	check_parameters_number(t_data *data, int p_nbr, int e_nbr)
+void	check_parameters_number(t_data *data, int p_nbr, int e_nbr)//work
 {
 	if (p_nbr > 1 || e_nbr > 1)
 	{
@@ -96,7 +92,7 @@ void check_borders(t_data *data)
 	}
 }
 
-void check_arguments(t_data *data, char **av)
+void check_arguments(t_data *data, char **av)//work
 {
     int	i;
     int	j;
@@ -106,7 +102,6 @@ void check_arguments(t_data *data, char **av)
 	i = 0;
 	p_nbr = 0;
 	e_nbr = 0;
-	// (void)av;
 	check_form(data, av);
 	check_borders(data);
     while (i < data->map_height)

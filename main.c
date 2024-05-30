@@ -6,98 +6,61 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:34:15 by shebaz            #+#    #+#             */
-/*   Updated: 2024/05/29 18:04:55 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/05/30 13:46:51 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-void free_2d_array(char **array, int rows) //work
+
+void free_map(char **map, int x, int fd)
 {
     int i;
-    
+
     i = 0;
-    while (i < rows)
+	perror("Error\n");
+	close(fd);
+    while (i < x)
     {
-        free(array[i]);
+        free(map[i]);
         i++;
     }
-    free(array);
+    free(map);
+    exit(EXIT_FAILURE);
 }
 
-void clear_data(t_data *data, int i)//work
+void map_2d_array(t_data *data, char **av, int width, int height)
 {
-    if (data->map)
-        free_2d_array(data->map, data->map_height);
-    if (data->mlx_ptr)
-    {
-        if (data->win_ptr)
-            mlx_destroy_window(data->mlx_ptr, data->win_ptr);
-        if (data->wall)
-            mlx_destroy_image(data->mlx_ptr, data->wall);
-        if (data->road)
-            mlx_destroy_image(data->mlx_ptr, data->road);
-        if (data->coins)
-            mlx_destroy_image(data->mlx_ptr, data->coins);
-        if (data->exit)
-            mlx_destroy_image(data->mlx_ptr, data->exit);
-        while (i < 3)
-        {
-            if (data->player[i])
-                mlx_destroy_image(data->mlx_ptr, data->player[i]);
-            i++;
-        }
-        mlx_destroy_display(data->mlx_ptr);
-        free(data->mlx_ptr);
-    }
-    free(data);
-}
-void map_2d_array(t_data *data, char **av, int width, int height) {
-    int fd = open(av[1], O_RDONLY);
+	int x;
+	int y;
+	int fd;
+    char *str;
+
+    x = 0;
+    fd = open(av[1], O_RDONLY);
     if (fd == -1)
         exit(EXIT_FAILURE);
-
     data->map = malloc(height * sizeof(char *));
-    if (!data->map) {
+    if (!data->map)
+    {
         perror("malloc failed for map");
         close(fd);
         exit(EXIT_FAILURE);
     }
-	int x = 0;
-	int y;
     while (x < height && x < WINDOWS_HEIGHT)
 	{
-        char *str = get_next_line(fd);
+        str = get_next_line(fd);
         if (!str)
-		{
-            perror("Error reading file");
-            for (int i = 0; i < x; i++) {
-                free(data->map[i]);
-            }
-            free(data->map);
-            close(fd);
-            exit(EXIT_FAILURE);
-        }
-
+            free_map(data->map, x, fd);
         data->map[x] = malloc((width + 1) * sizeof(char));
-        if (!data->map[x]) {
-            perror("malloc failed for map row");
-            free(str);
-            for (int i = 0; i < x; i++) {
-                free(data->map[i]);
-            }
-            free(data->map);
-            close(fd);
-            exit(EXIT_FAILURE);
-        }
+        if (!data->map[x])
+            free_map(data->map, x, fd);
 		y = 0;
         while (y < width && y < WINDOWS_WIDTH)
         {
             data->map[x][y] = str[y];
             if (str[y] == 'C' || str[y] == 'c')
-            {
                 data->coins_nbr++;
-            }
             y++;
         }
 		data->map[x][width] = '\0';
@@ -123,10 +86,7 @@ void draw_map(t_data *data, int width, int height)
             else if (data->map[x][y] == '0')
                 mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, y * TILE_SIZE, x * TILE_SIZE);
             else if (data->map[x][y] == 'c' || data->map[x][y] == 'C')
-			{
-				data->coins_nbr++;
                 mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->coins, y * TILE_SIZE, x * TILE_SIZE);
-			}
 			else if (data->map[x][y] == 'P')
 			{
 				data->x = x;
@@ -141,134 +101,7 @@ void draw_map(t_data *data, int width, int height)
     }
 }
 
-void go_up(t_data *data)
-{
-    if (data->map[data->x - 1][data->y] == '1' || (data->map[data->x - 1][data->y] == 'E' && data->coins_nbr != 0))
-        return ;
-    else if (data->map[data->x - 1][data->y] == '0')
-    {
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = '0';
-        data->x--;
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->player[0], data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = 'P';
-    } 
-    else if (data->map[data->x - 1][data->y] == 'c' || data->map[data->x - 1][data->y] == 'C')
-    {
-        data->coins_nbr--;
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = '0';
-        data->x--;
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->player[0], data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = 'P';
-    }
-    else if (data->map[data->x - 1][data->y] == 'E' && !(data->coins_nbr))
-	{
-		clear_data(data, 0);
-        exit(0);
-	}
-}
 
-void go_down(t_data *data)
-{
-    if (data->map[data->x + 1][data->y] == '1' || (data->map[data->x + 1][data->y] == 'E' && data->coins_nbr != 0))
-        return;
-    else if (data->map[data->x + 1][data->y] == '0')
-    {
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = '0';
-        data->x++;
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->player[0], data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = 'P';
-    }
-    else if (data->map[data->x + 1][data->y] == 'c' || data->map[data->x + 1][data->y] == 'C')
-	{
-        data->coins_nbr--;
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = '0';
-        data->x++;
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->player[0], data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = 'P';
-    }
-    else if (data->map[data->x][data->y] == 'E' && data->coins_nbr == 0)
-	{
-		clear_data(data, 0);
-        exit(0);
-	}
-}
-
-void go_right(t_data *data)
-{
-    if (data->map[data->x][data->y + 1] == '1' || (data->map[data->x][data->y + 1] == 'E' && data->coins_nbr != 0))
-        return;
-    else if (data->map[data->x][data->y + 1] == '0')
-    {
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = '0';
-        data->y++;
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->player[1], data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = 'P';
-    } 
-    else if (data->map[data->x][data->y + 1] == 'c' || data->map[data->x][data->y + 1] == 'C')
-    {
-        data->coins_nbr--;
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = '0';
-        data->y++;
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->player[1], data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = 'P';
-    }
-    else if (data->map[data->x][data->y + 1] == 'E' && data->coins_nbr == 0)
-	{
-		clear_data(data, 0);
-        exit(0);
-	}
-}
-
-void go_left(t_data *data)
-{
-    if (data->map[data->x][data->y - 1] == '1' || (data->map[data->x][data->y - 1] == 'E' && data->coins_nbr != 0))
-        return;
-    else if (data->map[data->x][data->y - 1] == '0')
-    {
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = '0';
-        data->y--;
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->player[2], data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = 'P';
-    }
-    else if (data->map[data->x][data->y - 1] == 'c' || data->map[data->x][data->y - 1] == 'C')
-    {
-        data->coins_nbr--;
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = '0';
-        data->y--;
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->player[2], data->y * TILE_SIZE, data->x * TILE_SIZE);
-        data->map[data->x][data->y] = 'P';
-    }
-    else if (data->map[data->x][data->y - 1] == 'E' && data->coins_nbr == 0)
-	{
-		clear_data(data, 0);
-        exit(0);
-	}
-}
-int handle_key(int keycode, t_data *data)//work
-{
-    if (keycode == 65307)//ESC
-    {
-		clear_data(data, 0);
-		exit(0);
-	}
-    else if (keycode == 0x0077)//W
-        go_up(data);
-    else if (keycode == 0x0073)//S
-        go_down(data);
-    else if (keycode == 0x0061)//A
-        go_left(data);
-    else if (keycode == 0x0064)//D
-        go_right(data);
-    return (0);
-}
 void initial_struct(t_data *data)//work
 {
     int i;
@@ -276,7 +109,7 @@ void initial_struct(t_data *data)//work
     i = 0;
     data->coins = NULL;
     data->wall = NULL;
-    while(i < 3)
+    while (i < 3)
     {
        data->player[i] = NULL;
        i++;
@@ -348,8 +181,8 @@ int main(int ac, char **av)
         return 1;
     }
 
-    data->wall = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/wall.xpm", &data->tex_width, &data->tex_height);
-    data->road = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/road.xpm", &data->tex_width, &data->tex_height);
+    data->wall =  mlx_xpm_file_to_image(data->mlx_ptr, "./assests/wall.xpm", &data->tex_width, &data->tex_height);
+    data->road =  mlx_xpm_file_to_image(data->mlx_ptr, "./assests/road.xpm", &data->tex_width, &data->tex_height);
     data->coins = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/coins.xpm", &data->tex_width, &data->tex_height);
     data->player[0] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/player.xpm", &data->tex_width, &data->tex_height);
     data->player[1] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/player_right.xpm", &data->tex_width, &data->tex_height);
@@ -364,7 +197,9 @@ int main(int ac, char **av)
     }
     draw_map(data, width, height);
     mlx_key_hook(data->win_ptr, handle_key, data);
+    mlx_hook(data->win_ptr,17 ,0 ,close_window, data);
     mlx_loop(data->mlx_ptr);
     clear_data(data, 0);
     return 0;
 }
+
