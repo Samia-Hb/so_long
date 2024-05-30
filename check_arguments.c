@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   check_arguments.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/29 17:31:38 by shebaz            #+#    #+#             */
+/*   Updated: 2024/05/29 20:04:13 by shebaz           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "so_long.h"
 
 void clear_exit(t_data *data)
@@ -5,34 +17,41 @@ void clear_exit(t_data *data)
 	clear_data(data, 0);
 	exit(1);
 }
+
 void check_form(t_data *data, char **av)
 {
-	int		fd;
-	char	*str;
-	int		i;
-	int		width;
+    int  fd;
+    char *str;
+    int  i;
+    int  width;
 
-	width = 0;
-	fd = open(av[1], O_RDWR, 0777);
-	if (fd == -1)
-		clear_exit(data);
-	width = data->map_width;
-	i = 0;
-	while (1)
-	{
-		str = get_next_line(fd);
-		if(!str || width != ft_strlen(str))
-			break;
-		free(str);
-		i++;
-	}
-	free(str);
-	if ((i != (data->map_height - 1) || i == (data->map_height - 1) && strlen(data->map[data->map_height - 1]) != width - 1) && data->map_height != 1)
-	{
-		perror("Error : map is not a rectangle");
-		clear_exit(data);
-	}
+    width = 0;
+    fd = open(av[1], O_RDWR, 0777);
+    if (fd == -1)
+        clear_exit(data);
+    width = data->map_width;
+    i = 0;
+    while (1)
+    {
+        str = get_next_line(fd);
+        if (!str)
+            break;
+        if (width != ft_strlen(str))
+            break;
+        free(str);
+        i++;
+    }
+    if (str)
+        free(str);
+    close(fd);
+    if (i != (data->map_height - 1) || (i == (data->map_height - 1) && ft_strlen(data->map[data->map_height - 1]) != width - 1 && data->map_height != 1))
+    {
+        perror("Error : map is not a rectangle");
+        clear_exit(data);
+    }
 }
+
+
 void	check_parameters_number(t_data *data, int p_nbr, int e_nbr)
 {
 	if (p_nbr > 1 || e_nbr > 1)
@@ -87,7 +106,8 @@ void check_arguments(t_data *data, char **av)
 	i = 0;
 	p_nbr = 0;
 	e_nbr = 0;
-	//check_form(data, av);
+	// (void)av;
+	check_form(data, av);
 	check_borders(data);
     while (i < data->map_height)
     {

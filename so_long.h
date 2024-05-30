@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 13:14:33 by shebaz            #+#    #+#             */
-/*   Updated: 2024/05/29 13:44:17 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/05/29 17:31:15 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,9 @@ typedef struct s_data
     int map_width;
 } t_data;
 
-void check_arguments(t_data *data, char **av);
+// void check_arguments(t_data *data, char **av);
 void clear_data(t_data *data, int i);
 void initial_struct(t_data *data);
+void check_arguments(t_data *data, char **av);
 
 #endif

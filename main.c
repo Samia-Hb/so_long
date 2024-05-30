@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:34:15 by shebaz            #+#    #+#             */
-/*   Updated: 2024/05/29 14:28:46 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/05/29 18:04:55 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,11 +91,14 @@ void map_2d_array(t_data *data, char **av, int width, int height) {
             exit(EXIT_FAILURE);
         }
 		y = 0;
-        while (y < width && y < WINDOWS_WIDTH) {
+        while (y < width && y < WINDOWS_WIDTH)
+        {
             data->map[x][y] = str[y];
-            if(str[y] == 'C' || str[y] == 'c')
+            if (str[y] == 'C' || str[y] == 'c')
+            {
                 data->coins_nbr++;
-    		y++;
+            }
+            y++;
         }
 		data->map[x][width] = '\0';
         free(str);
