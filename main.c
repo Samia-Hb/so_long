@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:34:15 by shebaz            #+#    #+#             */
-/*   Updated: 2024/05/30 13:46:51 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/05/31 22:19:51 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,58 +28,61 @@ void free_map(char **map, int x, int fd)
     free(map);
     exit(EXIT_FAILURE);
 }
-
-void map_2d_array(t_data *data, char **av, int width, int height)
+void fill_the_array(t_data *data, int fd,int x, int y)
 {
-	int x;
-	int y;
-	int fd;
-    char *str;
+	char *str;
 
-    x = 0;
-    fd = open(av[1], O_RDONLY);
-    if (fd == -1)
-        exit(EXIT_FAILURE);
-    data->map = malloc(height * sizeof(char *));
-    if (!data->map)
-    {
-        perror("malloc failed for map");
-        close(fd);
-        exit(EXIT_FAILURE);
-    }
-    while (x < height && x < WINDOWS_HEIGHT)
+	while (x < data->map_height && x < WINDOWS_HEIGHT)
 	{
         str = get_next_line(fd);
         if (!str)
             free_map(data->map, x, fd);
-        data->map[x] = malloc((width + 1) * sizeof(char));
+        data->map[x] = malloc((data->map_width + 1) * sizeof(char));
         if (!data->map[x])
             free_map(data->map, x, fd);
 		y = 0;
-        while (y < width && y < WINDOWS_WIDTH)
+        while (y < data->map_width && y < WINDOWS_WIDTH)
         {
             data->map[x][y] = str[y];
             if (str[y] == 'C' || str[y] == 'c')
                 data->coins_nbr++;
             y++;
         }
-		data->map[x][width] = '\0';
+		data->map[x][data->map_width] = '\0';
         free(str);
     	x++;
 	}
+	// if (str)
+		// free(str);
+}
+void map_2d_array(t_data *data, char **av)
+{
+	int	fd;
+	int	x;
+	int	y;
+
+	x = 0;
+	y = 0;
+    fd = open(av[1], O_RDONLY);
+    if (fd == -1)
+        exit(EXIT_FAILURE);
+    data->map = malloc(data->map_height * sizeof(char *));
+    if (!data->map)
+    {
+        perror("malloc failed for map");
+        close(fd);
+        exit(EXIT_FAILURE);
+    }
+	fill_the_array(data, fd, x, y);
     close(fd);
 }
 
-void draw_map(t_data *data, int width, int height)
+void draw_map(t_data *data, int x, int y)//work
 {
-    int y;
-	int	x;
-
-	x = 0;
-	while (x < height)
+	while (x < data->map_height)
 	{
 		y = 0;
-        while (y < width)
+        while (y < data->map_width)
 		{
             if (data->map[x][y] == '1')
                 mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->wall, y * TILE_SIZE, x * TILE_SIZE);
@@ -95,12 +98,13 @@ void draw_map(t_data *data, int width, int height)
 			}
 			else if (data->map[x][y] == 'E')
                 mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->exit, y * TILE_SIZE, x * TILE_SIZE);
+            else if (data->map[x][y] == 'e')
+                mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[0], y * TILE_SIZE, x * TILE_SIZE);
 			y++;
 		}
 		x++;
     }
 }
-
 
 void initial_struct(t_data *data)//work
 {
@@ -108,6 +112,8 @@ void initial_struct(t_data *data)//work
 
     i = 0;
     data->coins = NULL;
+	data->coins_nbr = 0;
+	data->map_height = 1;
     data->wall = NULL;
     while (i < 3)
     {
@@ -121,66 +127,8 @@ void initial_struct(t_data *data)//work
     data->map = NULL;
 }
 
-int main(int ac, char **av)
+void picture_loading(t_data *data)
 {
-    t_data *data;
-    char *str;
-    int width;
-    int height;
-
-    if (ac < 2)
-        return 1;
-
-    data = malloc(sizeof(t_data));
-    if (!data)
-        return 1;
-    initial_struct(data);
-    int fd = open(av[1], O_RDONLY);
-    if (fd == -1)
-    {
-        perror("Error opening file");
-        free(data);
-        return 1;
-    }
-    str = get_next_line(fd);
-    if (!str)
-    {
-        perror("Error reading file");
-        close(fd);
-        clear_data(data, 0);
-        return 1;
-    }
-    width = strlen(str);
-    data->map_width = width;
-    data->coins_nbr = 0;
-    height = 1;
-    free(str);
-
-    while ((str = get_next_line(fd)) != NULL)
-    {
-        height++;
-        free(str);
-    }
-    close(fd);
-    data->map_height = height;
-    map_2d_array(data, av, width, height);
-    check_arguments(data,av);
-    data->mlx_ptr = mlx_init();
-    if (!data->mlx_ptr)
-    {
-        free(data);
-        return 1;
-    }
-	data->win_ptr = mlx_new_window(data->mlx_ptr, width * TILE_SIZE, height * TILE_SIZE, "So_long");
-    if (!data->win_ptr)
-    {
-        mlx_destroy_display(data->mlx_ptr);
-        free(data->map);
-        free(data->mlx_ptr);
-        free(data);
-        return 1;
-    }
-
     data->wall =  mlx_xpm_file_to_image(data->mlx_ptr, "./assests/wall.xpm", &data->tex_width, &data->tex_height);
     data->road =  mlx_xpm_file_to_image(data->mlx_ptr, "./assests/road.xpm", &data->tex_width, &data->tex_height);
     data->coins = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/coins.xpm", &data->tex_width, &data->tex_height);
@@ -188,16 +136,125 @@ int main(int ac, char **av)
     data->player[1] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/player_right.xpm", &data->tex_width, &data->tex_height);
     data->player[2] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/player_left.xpm", &data->tex_width, &data->tex_height);
     data->exit = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/exit.xpm", &data->tex_width, &data->tex_height);
-
-    if (!data->wall || !data->road || !data->coins || !data->player[0] || !data->exit)
+    data->enemy[0] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/1.xpm", &data->tex_width, &data->tex_height);
+    data->enemy[1] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/2.xpm", &data->tex_width, &data->tex_height);
+    data->enemy[2] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/3.xpm", &data->tex_width, &data->tex_height);
+    data->enemy[3] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/4.xpm", &data->tex_width, &data->tex_height);
+    data->enemy[4] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/5.xpm", &data->tex_width, &data->tex_height);
+    data->enemy[5] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/6.xpm", &data->tex_width, &data->tex_height);
+    if (!data->wall || !data->road || !data->coins || !data->player[0] || !data->player[1] || !data->player[2] || 
+    !data->exit || !data->enemy[0] || !data->enemy[1] || !data->enemy[2] || !data->enemy[3]|| !data->enemy[4]|| !data->enemy[5])
     {
         perror("Failed to load one or more textures");
-        clear_data(data, 0);
-        return 1;
+        clear_exit(data);
     }
-    draw_map(data, width, height);
+}
+void calcul_width_height(t_data *data, char **av)
+{
+    char *str;
+    int fd;
+
+    fd = open(av[1], O_RDONLY);
+    if (fd == -1)
+    {
+        perror("Error opening file");
+        clear_exit(data);
+    }
+    str = get_next_line(fd);
+    if (!str)
+    {
+        perror("Error reading file");
+        close(fd);
+        clear_exit(data);
+    }
+    data->map_width = ft_strlen(str);
+    free(str);
+    while ((str = get_next_line(fd)))
+    {
+        free(str);
+        (data->map_height)++;
+    }
+    close(fd);
+    free(str);
+}
+void load_bonus_pictures(t_data *data)
+{
+    int i;
+
+    i = 0;
+    const char *filepaths[6] =
+    {
+        "./assests/bonus_assests/1.xpm",
+        "./assests/bonus_assests/2.xpm",
+        "./assests/bonus_assests/3.xpm",
+        "./assests/bonus_assests/4.xpm",
+        "./assests/bonus_assests/5.xpm",
+        "./assests/bonus_assests/6.xpm"
+    };
+    while (i < 6)
+    {
+        data->enemy[i] = mlx_xpm_file_to_image(data->mlx_ptr, (char *)filepaths[i], &data->tex_width, &data->tex_height);
+        if (!data->enemy[i])
+        {
+            perror("Error : Failed to load frame %d: %s\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+    data->frame_count = 6;
+    data->current_frame = 0;
+    data->frame_delay = 80;
+    data->frame_delay_counter = 0;
+    data->x = 100;
+    data->y = 100;
+}
+void animation(t_data *data)
+{
+    int x = data->e_x_pos;
+    int y = data->e_y_pos;
+    while (data->map[e_x_pos][e_y_pos] != '1' && data->map[e_x_pos][e_y_pos] != 'c' && data->map[e_x_pos][e_y_pos] != 'C' && data->map[e_x_pos][e_y_pos] != 'E')
+    {
+        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[0], (y + 1) * TILE_SIZE, x * TILE_SIZE);
+        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, y * TILE_SIZE, x * TILE_SIZE);
+        e_x_pos = x;
+        e_y_pos = y + 1;
+    }
+    while (data->map[e_x_pos][e_y_pos] != '1' && data->map[e_x_pos][e_y_pos] != 'c' && data->map[e_x_pos][e_y_pos] != 'C' && data->map[e_x_pos][e_y_pos] != 'E')
+    {
+        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[0], (y + 1) * TILE_SIZE, x * TILE_SIZE);
+        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, y * TILE_SIZE, x * TILE_SIZE);
+        e_x_pos = x;
+        e_y_pos = y - 1;
+    }
+}
+int main(int ac, char **av)
+{
+    t_data *data;
+
+    if (ac < 2)
+        return 1;
+    data = malloc(sizeof(t_data));
+    if (!data)
+        return (1);
+    initial_struct(data);
+	calcul_width_height(data,av);
+    map_2d_array(data, av);
+    check_arguments(data,av);
+    data->mlx_ptr = mlx_init();
+    if (!data->mlx_ptr)
+	{ 
+        clear_exit(data);
+	}
+	data->win_ptr = mlx_new_window(data->mlx_ptr, data->map_width * TILE_SIZE, data->map_height * TILE_SIZE, "So_long");
+    if (!data->win_ptr)
+	{
+        clear_exit(data);
+	}
+	picture_loading(data);
+    draw_map(data,0 , 0);
     mlx_key_hook(data->win_ptr, handle_key, data);
     mlx_hook(data->win_ptr,17 ,0 ,close_window, data);
+    load_bonus_frames(&data);
+    mlx_loop_hook(data->win_ptr, animation, data);
     mlx_loop(data->mlx_ptr);
     clear_data(data, 0);
     return 0;
