@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:34:15 by shebaz            #+#    #+#             */
-/*   Updated: 2024/05/31 22:19:51 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/01 15:15:39 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ void map_2d_array(t_data *data, char **av)
     close(fd);
 }
 
+
 void draw_map(t_data *data, int x, int y)//work
 {
 	while (x < data->map_height)
@@ -99,8 +100,13 @@ void draw_map(t_data *data, int x, int y)//work
 			else if (data->map[x][y] == 'E')
                 mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->exit, y * TILE_SIZE, x * TILE_SIZE);
             else if (data->map[x][y] == 'e')
+            {
+                data->e_x_pos = x;
+                data->e_y_pos = y;
                 mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[0], y * TILE_SIZE, x * TILE_SIZE);
-			y++;
+                // printf("enemy_position(%d,%d)",data->e_x_pos, data->e_y_pos);
+            }
+            y++;
 		}
 		x++;
     }
@@ -125,6 +131,11 @@ void initial_struct(t_data *data)//work
     data->win_ptr = NULL;
     data->mlx_ptr = NULL;
     data->map = NULL;
+
+    data->frame_count = 6;
+    data->current_frame = 0;
+    data->frame_delay = 80;
+    data->frame_delay_counter = 0;
 }
 
 void picture_loading(t_data *data)
@@ -136,18 +147,23 @@ void picture_loading(t_data *data)
     data->player[1] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/player_right.xpm", &data->tex_width, &data->tex_height);
     data->player[2] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/player_left.xpm", &data->tex_width, &data->tex_height);
     data->exit = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/exit.xpm", &data->tex_width, &data->tex_height);
+    if (!data->wall || !data->road || !data->coins || !data->player[0] || !data->player[1] || !data->player[2] || 
+    !data->exit)
+    {
+        perror("Failed to load one or more textures");
+        clear_exit(data);
+    }
     data->enemy[0] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/1.xpm", &data->tex_width, &data->tex_height);
     data->enemy[1] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/2.xpm", &data->tex_width, &data->tex_height);
     data->enemy[2] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/3.xpm", &data->tex_width, &data->tex_height);
     data->enemy[3] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/4.xpm", &data->tex_width, &data->tex_height);
     data->enemy[4] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/5.xpm", &data->tex_width, &data->tex_height);
     data->enemy[5] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/6.xpm", &data->tex_width, &data->tex_height);
-    if (!data->wall || !data->road || !data->coins || !data->player[0] || !data->player[1] || !data->player[2] || 
-    !data->exit || !data->enemy[0] || !data->enemy[1] || !data->enemy[2] || !data->enemy[3]|| !data->enemy[4]|| !data->enemy[5])
-    {
-        perror("Failed to load one or more textures");
-        clear_exit(data);
-    }
+
+    data->frame_count = 6;
+    data->current_frame = 0;
+    data->frame_delay = 80;
+    data->frame_delay_counter = 0;
 }
 void calcul_width_height(t_data *data, char **av)
 {
@@ -177,55 +193,45 @@ void calcul_width_height(t_data *data, char **av)
     close(fd);
     free(str);
 }
-void load_bonus_pictures(t_data *data)
-{
-    int i;
+////////////////
 
-    i = 0;
-    const char *filepaths[6] =
-    {
-        "./assests/bonus_assests/1.xpm",
-        "./assests/bonus_assests/2.xpm",
-        "./assests/bonus_assests/3.xpm",
-        "./assests/bonus_assests/4.xpm",
-        "./assests/bonus_assests/5.xpm",
-        "./assests/bonus_assests/6.xpm"
-    };
-    while (i < 6)
-    {
-        data->enemy[i] = mlx_xpm_file_to_image(data->mlx_ptr, (char *)filepaths[i], &data->tex_width, &data->tex_height);
-        if (!data->enemy[i])
-        {
-            perror("Error : Failed to load frame %d: %s\n");
-            exit(EXIT_FAILURE);
-        }
-    }
-    data->frame_count = 6;
-    data->current_frame = 0;
-    data->frame_delay = 80;
-    data->frame_delay_counter = 0;
-    data->x = 100;
-    data->y = 100;
-}
-void animation(t_data *data)
+void update_frame(t_data *data)
 {
-    int x = data->e_x_pos;
-    int y = data->e_y_pos;
-    while (data->map[e_x_pos][e_y_pos] != '1' && data->map[e_x_pos][e_y_pos] != 'c' && data->map[e_x_pos][e_y_pos] != 'C' && data->map[e_x_pos][e_y_pos] != 'E')
+    data->frame_delay_counter++;
+    if (data->frame_delay_counter >= data->frame_delay)
     {
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[0], (y + 1) * TILE_SIZE, x * TILE_SIZE);
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, y * TILE_SIZE, x * TILE_SIZE);
-        e_x_pos = x;
-        e_y_pos = y + 1;
-    }
-    while (data->map[e_x_pos][e_y_pos] != '1' && data->map[e_x_pos][e_y_pos] != 'c' && data->map[e_x_pos][e_y_pos] != 'C' && data->map[e_x_pos][e_y_pos] != 'E')
-    {
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[0], (y + 1) * TILE_SIZE, x * TILE_SIZE);
-        mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, y * TILE_SIZE, x * TILE_SIZE);
-        e_x_pos = x;
-        e_y_pos = y - 1;
+        data->frame_delay_counter = 0;
+        data->current_frame = (data->current_frame + 1) % data->frame_count;
     }
 }
+
+int animation(t_data *data)
+{
+    update_frame(data);
+    data->e_y_pos++;
+    if (data->e_y_pos >= data->map_width)
+        data->e_y_pos = 0;
+    mlx_clear_window(data->mlx_ptr, data->win_ptr);
+    draw_map(data, 0, 0);
+    mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[data->current_frame], data->e_y_pos * TILE_SIZE, data->e_x_pos * TILE_SIZE);
+    mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->player[0], data->y * TILE_SIZE, data->x * TILE_SIZE);
+    return (0);
+}
+
+// void update_frame(t_data *data)
+// {
+//     data->current_frame++;
+//     if (data->frame_delay_counter <= data->frame_delay)
+//     {
+//         mlx_put_image_to_window(data->mlx_ptr,data->win_ptr, data->enemy[data->current_frame], data->e_x_pos * TILE_SIZE, data->e_x_pos * TILE_SIZE);
+//     }  
+// }
+// int animation(t_data *data)
+// {
+//     update_frame(data);
+//     return (0);
+// }
+
 int main(int ac, char **av)
 {
     t_data *data;
@@ -253,10 +259,32 @@ int main(int ac, char **av)
     draw_map(data,0 , 0);
     mlx_key_hook(data->win_ptr, handle_key, data);
     mlx_hook(data->win_ptr,17 ,0 ,close_window, data);
-    load_bonus_frames(&data);
-    mlx_loop_hook(data->win_ptr, animation, data);
+    mlx_loop_hook(data->mlx_ptr, animation, data);
     mlx_loop(data->mlx_ptr);
     clear_data(data, 0);
     return 0;
 }
 
+// int animation(t_data *data)
+// {
+//     int x = data->e_x_pos;
+//     int y = data->e_y_pos;
+//     while (data->map[data->e_x_pos][data->e_y_pos] != '1' && data->map[data->e_x_pos][data->e_y_pos] != 'c' && data->map[data->e_x_pos][data->e_y_pos] != 'C' && data->map[data->e_x_pos][data->e_y_pos] != 'E')
+//     {
+//         mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[0], (y + 1) * TILE_SIZE, x * TILE_SIZE);
+//         mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, y * TILE_SIZE, x * TILE_SIZE);
+//         data->e_x_pos = x;
+//         data->e_y_pos = y + 1;
+//     }
+//     while (data->map[data->e_x_pos][data->e_y_pos] != '1' && data->map[data->e_x_pos][data->e_y_pos] != 'c' && data->map[data->e_x_pos][data->e_y_pos] != 'C' && data->map[data->e_x_pos][data->e_y_pos] != 'E')
+//     {
+//         mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[0], (y + 1) * TILE_SIZE, x * TILE_SIZE);
+//         mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, y * TILE_SIZE, x * TILE_SIZE);
+//         data->e_x_pos = x;
+//         data->e_y_pos = y - 1;
+//     }
+//     return (1);
+// }
+
+
+//////////////

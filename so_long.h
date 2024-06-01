@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 13:14:33 by shebaz            #+#    #+#             */
-/*   Updated: 2024/05/31 14:28:55 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/01 10:39:55 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ typedef struct s_data
     void *win_ptr;
     void *wall;
     void *player[3];
-    void *enemy[5];
+    void *enemy[6];
     void *road;
     void *coins;
     void *exit;
@@ -42,7 +42,37 @@ typedef struct s_data
 	int coins_nbr;
 	int map_height;
     int map_width;
+    ////bonus
+    int frame_delay_count;
+    int current_frame;
+    int frame_count;
+    int frame_delay;
+    int frame_delay_counter;
+    int e_x_pos;
+    int e_y_pos;
 } t_data;
+
+// typedef struct s_data {
+//     void    *mlx_ptr;
+//     void    *win_ptr;
+//     void    *wall;
+//     void    *road;
+//     void    *coins;
+//     void    *player[3];
+//     void    *exit;
+//     void    *enemy[6];
+//     char    **map;
+//     int     map_width;
+//     int     map_height;
+//     int     coins_nbr;
+//     int     x;
+//     int     y;
+//     int     e_x_pos;
+//     int     e_y_pos;
+//     int     enemy_direction; // 1 for right, -1 for left
+//     int     tex_width;
+//     int     tex_height;
+// } t_data;
 
 
 void clear_data(t_data *data, int i);
@@ -51,5 +81,6 @@ void    check_arguments(t_data *data, char **av);
 int handle_key(int keycode, t_data *data);
 int close_window(t_data *data);
 void clear_exit(t_data *data);
+// void load_bonus_pictures(t_data *data);
 
 #endif
