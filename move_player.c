@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 11:49:10 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/03 11:49:20 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/03 22:13:14 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,10 @@ void	go_left(t_data *data) // work
 
 int	handle_key(int keycode, t_data *data) // work
 {
+	int	i;
+
+	i = 0;
+	i++;
 	if (keycode == 65307)
 		clear_exit(data);
 	if (keycode == 0x0077)
@@ -136,5 +140,6 @@ int	handle_key(int keycode, t_data *data) // work
 		go_left(data);
 	else if (keycode == 0x0064)
 		go_right(data);
+	printf("move : %d", i);
 	return (0);
 }

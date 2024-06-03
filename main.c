@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:34:15 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/03 14:04:46 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/03 22:09:51 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,6 @@ int	main(int ac, char **av)
 		return (1);
 	initial_struct(data);
 	calcul_width_height(data, av, str);
-	printf("check\n");
 	map_2d_array(data, av);
 	check_arguments(data, av);
 	windows_stuff(data);

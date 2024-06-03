@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/30 13:42:37 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/03 14:05:21 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/03 22:11:31 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,12 @@ void	fill_the_array(t_data *data, int fd, int x, int y)
 {
 	char	*str;
 
+	str = NULL;
 	while (x < data->map_height && x < WINDOWS_HEIGHT)
 	{
 		str = get_next_line(fd);
 		if (!str)
-			free_map(data->map, x, fd);
+			break ;
 		data->map[x] = malloc((data->map_width + 1) * sizeof(char));
 		if (!data->map[x])
 			free_map(data->map, x, fd);
@@ -77,7 +78,7 @@ int	ft_strncmp(char *s1, char *s2, int n)
 void	initial_struct(t_data *data) // work
 {
 	data->coins_nbr = 0;
-	data->map_height = 1;
+	data->map_height = 0;
 	data->e_nbr = 0;
 	data->p_nbr = 0;
 }
