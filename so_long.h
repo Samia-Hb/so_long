@@ -43,37 +43,12 @@ typedef struct s_data
 	int map_height;
     int map_width;
     ////bonus
-    int frame_delay_count;
-    int current_frame;
-    int frame_count;
-    int frame_delay;
-    int frame_delay_counter;
     int e_x_pos;
     int e_y_pos;
+    int frame_time;
+    int move_time;
+    int frame;
 } t_data;
-
-// typedef struct s_data {
-//     void    *mlx_ptr;
-//     void    *win_ptr;
-//     void    *wall;
-//     void    *road;
-//     void    *coins;
-//     void    *player[3];
-//     void    *exit;
-//     void    *enemy[6];
-//     char    **map;
-//     int     map_width;
-//     int     map_height;
-//     int     coins_nbr;
-//     int     x;
-//     int     y;
-//     int     e_x_pos;
-//     int     e_y_pos;
-//     int     enemy_direction; // 1 for right, -1 for left
-//     int     tex_width;
-//     int     tex_height;
-// } t_data;
-
 
 void clear_data(t_data *data, int i);
 void    initial_struct(t_data *data);

@@ -99,13 +99,6 @@ void draw_map(t_data *data, int x, int y)//work
 			}
 			else if (data->map[x][y] == 'E')
                 mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->exit, y * TILE_SIZE, x * TILE_SIZE);
-            else if (data->map[x][y] == 'e')
-            {
-                data->e_x_pos = x;
-                data->e_y_pos = y;
-                mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[0], y * TILE_SIZE, x * TILE_SIZE);
-                // printf("enemy_position(%d,%d)",data->e_x_pos, data->e_y_pos);
-            }
             y++;
 		}
 		x++;
@@ -131,11 +124,10 @@ void initial_struct(t_data *data)//work
     data->win_ptr = NULL;
     data->mlx_ptr = NULL;
     data->map = NULL;
-
-    data->frame_count = 6;
-    data->current_frame = 0;
-    data->frame_delay = 80;
-    data->frame_delay_counter = 0;
+    ////bonus
+    data->frame = 0;
+    data->frame_time = 5;
+    data->move_time = 80;
 }
 
 void picture_loading(t_data *data)
@@ -159,11 +151,6 @@ void picture_loading(t_data *data)
     data->enemy[3] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/4.xpm", &data->tex_width, &data->tex_height);
     data->enemy[4] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/5.xpm", &data->tex_width, &data->tex_height);
     data->enemy[5] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/6.xpm", &data->tex_width, &data->tex_height);
-
-    data->frame_count = 6;
-    data->current_frame = 0;
-    data->frame_delay = 80;
-    data->frame_delay_counter = 0;
 }
 void calcul_width_height(t_data *data, char **av)
 {
@@ -193,44 +180,86 @@ void calcul_width_height(t_data *data, char **av)
     close(fd);
     free(str);
 }
-////////////////
 
-void update_frame(t_data *data)
+///////bonus//////////////
+int check_path(t_data *data)//check_if_there_is_a_valid_path
 {
-    data->frame_delay_counter++;
-    if (data->frame_delay_counter >= data->frame_delay)
+    int x;
+    int y;
+
+    x = 0;
+    while (x < data->map_height)
     {
-        data->frame_delay_counter = 0;
-        data->current_frame = (data->current_frame + 1) % data->frame_count;
+        y = 0;
+        while(y < data->map_width)
+        {
+            if (data->map[x][y] == '0')
+            {
+                data->e_x_pos = x;
+                data->e_y_pos = y;
+                return (1);
+            }
+            y++;
+        }
+        x++;
     }
+    return (0);
+}
+
+void move_enemy(t_data *data)
+{
+    mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[data->frame], data->e_y_pos * TILE_SIZE, data->e_x_pos * TILE_SIZE);
+    data->frame++;
+    if (data->frame >= 5)
+        data->frame = 0;
+}
+
+void render_img(t_data *data)
+{
+    data->enemy[0] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/1.xpm", &data->tex_width, &data->tex_height);
+    data->enemy[1] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/2.xpm", &data->tex_width, &data->tex_height);
+    data->enemy[2] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/3.xpm", &data->tex_width, &data->tex_height);
+    data->enemy[3] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/4.xpm", &data->tex_width, &data->tex_height);
+    data->enemy[4] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/5.xpm", &data->tex_width, &data->tex_height);
+    data->enemy[5] = mlx_xpm_file_to_image(data->mlx_ptr, "./assests/bonus_assests/6.xpm", &data->tex_width, &data->tex_height);
+    mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[data->frame], data->e_y_pos * TILE_SIZE, data->e_x_pos * TILE_SIZE);
 }
 
 int animation(t_data *data)
 {
-    update_frame(data);
-    data->e_y_pos++;
-    if (data->e_y_pos >= data->map_width)
-        data->e_y_pos = 0;
-    mlx_clear_window(data->mlx_ptr, data->win_ptr);
-    draw_map(data, 0, 0);
-    mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[data->current_frame], data->e_y_pos * TILE_SIZE, data->e_x_pos * TILE_SIZE);
-    mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->player[0], data->y * TILE_SIZE, data->x * TILE_SIZE);
-    return (0);
-}
+    // int i;
 
-// void update_frame(t_data *data)
-// {
-//     data->current_frame++;
-//     if (data->frame_delay_counter <= data->frame_delay)
-//     {
-//         mlx_put_image_to_window(data->mlx_ptr,data->win_ptr, data->enemy[data->current_frame], data->e_x_pos * TILE_SIZE, data->e_x_pos * TILE_SIZE);
-//     }  
-// }
-// int animation(t_data *data)
-// {
-//     update_frame(data);
-//     return (0);
-// }
+    // i = 0;
+    if (check_path(data))
+    {
+        if (data->frame_time-- <= 0)
+        {
+            data->frame++;
+            if (data->frame >= 5)
+                data->frame = 0;
+        }
+        if (data->move_time-- <= 0)
+        {
+            move_enemy(data);
+            data->move_time = 80;
+        }
+        printf("player(%d,%d)\n",data->x,data->y);
+        printf("enemy(%d,%d)\n",data->e_x_pos, data->e_y_pos);
+        if(data->x == data->e_x_pos / 50 && data->y == data->e_y_pos/ 50)
+        {
+            // while(i < 5)
+            // { 
+            //     mlx_destroy_image(data->mlx_ptr,data->enemy[i]);
+            //     i++;
+            // }
+            clear_data(data, 0);
+            write(1, "YOU LOSE :)\n", 12);
+            exit(1);
+        }
+        render_img(data);
+    }
+    return 1;
+}
 
 int main(int ac, char **av)
 {
@@ -264,27 +293,3 @@ int main(int ac, char **av)
     clear_data(data, 0);
     return 0;
 }
-
-// int animation(t_data *data)
-// {
-//     int x = data->e_x_pos;
-//     int y = data->e_y_pos;
-//     while (data->map[data->e_x_pos][data->e_y_pos] != '1' && data->map[data->e_x_pos][data->e_y_pos] != 'c' && data->map[data->e_x_pos][data->e_y_pos] != 'C' && data->map[data->e_x_pos][data->e_y_pos] != 'E')
-//     {
-//         mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[0], (y + 1) * TILE_SIZE, x * TILE_SIZE);
-//         mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, y * TILE_SIZE, x * TILE_SIZE);
-//         data->e_x_pos = x;
-//         data->e_y_pos = y + 1;
-//     }
-//     while (data->map[data->e_x_pos][data->e_y_pos] != '1' && data->map[data->e_x_pos][data->e_y_pos] != 'c' && data->map[data->e_x_pos][data->e_y_pos] != 'C' && data->map[data->e_x_pos][data->e_y_pos] != 'E')
-//     {
-//         mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->enemy[0], (y + 1) * TILE_SIZE, x * TILE_SIZE);
-//         mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, y * TILE_SIZE, x * TILE_SIZE);
-//         data->e_x_pos = x;
-//         data->e_y_pos = y - 1;
-//     }
-//     return (1);
-// }
-
-
-//////////////
