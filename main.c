@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:34:15 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/03 22:09:51 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/04 13:20:20 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,16 +78,12 @@ void	windows_stuff(t_data *data)
 
 void	check_arguments(t_data *data, char **av) // work
 {
-	int	p_nbr;
-	int	e_nbr;
-
-	p_nbr = 0;
-	e_nbr = 0;
 	check_arg(data, av);
 	check_characters(data);
 	check_form(data, av);
 	check_borders(data);
 	check_parameters_number(data, 0, 0);
+	check_path(data);
 }
 
 int	main(int ac, char **av)

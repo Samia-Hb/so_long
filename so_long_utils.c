@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/30 13:42:37 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/03 22:11:31 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/04 13:11:27 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,5 +109,4 @@ void	calcul_width_height(t_data *data, char **av, char *str)
 		free(str);
 	}
 	close(fd);
-	free(str);
 }
