@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 13:14:33 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/04 13:04:54 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/04 23:00:43 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,5 +62,7 @@ void		check_form(t_data *data, char **av);
 void		check_characters(t_data *data);
 void		check_parameters_number(t_data *data, int i, int j);
 void		check_path(t_data *data);
+void		free_2d_array(char **array, int height);
+void		insert_pos(t_data *data, int x, int y);
 
 #endif

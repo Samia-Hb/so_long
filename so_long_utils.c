@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/30 13:42:37 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/04 13:11:27 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/04 22:57:28 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ void	fill_the_array(t_data *data, int fd, int x, int y)
 		while (y < data->map_width && y < WINDOWS_WIDTH)
 		{
 			data->map[x][y] = str[y];
-			if (str[y] == 'C' || str[y] == 'c')
-				data->coins_nbr++;
+			if (str[y] == 'C' || str[y] == 'P')
+				insert_pos(data, x, y);
 			y++;
 		}
 		data->map[x][data->map_width] = '\0';
@@ -85,7 +85,7 @@ void	initial_struct(t_data *data) // work
 
 void	calcul_width_height(t_data *data, char **av, char *str)
 {
-	int		fd;
+	int	fd;
 
 	fd = open(av[1], O_RDONLY);
 	if (fd == -1)

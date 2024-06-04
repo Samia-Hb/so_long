@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 17:31:38 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/03 22:09:41 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/04 22:59:08 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,9 @@ void	check_characters(t_data *data)
 		j = 0;
 		while (j < data->map_width - 1)
 		{
-			if (data->map[i][j] != '1'
-				&& data->map[i][j] != '0' && data->map[i][j] != 'P'
-				&& data->map[i][j] != 'C' && data->map[i][j] != 'c'
-				&& data->map[i][j] != 'E')
+			if (data->map[i][j] != '1' && data->map[i][j] != '0'
+				&& data->map[i][j] != 'P' && data->map[i][j] != 'C'
+				&& data->map[i][j] != 'c' && data->map[i][j] != 'E')
 			{
 				perror("Error\n");
 				clear_exit(data);

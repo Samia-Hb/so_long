@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:34:15 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/04 13:20:20 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/04 21:51:11 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ void	draw_map(t_data *data, void *texture, int x, int y) // work
 			}
 			else if (data->map[x][y] == 'E')
 				texture = data->exit;
-			mlx_put_image_to_window(data->mlx_ptr, data->win_ptr,
-				texture, y * TILE_SIZE, x * TILE_SIZE);
+			mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, texture, y
+				* TILE_SIZE, x * TILE_SIZE);
 			y++;
 		}
 		x++;
