@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/30 13:42:37 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/04 22:57:28 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/05 16:14:21 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,18 @@ void	fill_the_array(t_data *data, int fd, int x, int y)
 		str = get_next_line(fd);
 		if (!str)
 			break ;
-		data->map[x] = malloc((data->map_width + 1) * sizeof(char));
+		data->map[x] = malloc((ft_strlen(str) + 1) * sizeof(char));
 		if (!data->map[x])
 			free_map(data->map, x, fd);
 		y = 0;
-		while (y < data->map_width && y < WINDOWS_WIDTH)
+		while (y < ft_strlen(str) && y < WINDOWS_WIDTH)
 		{
 			data->map[x][y] = str[y];
 			if (str[y] == 'C' || str[y] == 'P')
 				insert_pos(data, x, y);
 			y++;
 		}
-		data->map[x][data->map_width] = '\0';
+		data->map[x][ft_strlen(str)] = '\0';
 		free(str);
 		x++;
 	}
@@ -73,14 +73,6 @@ int	ft_strncmp(char *s1, char *s2, int n)
 		i++;
 	}
 	return (s1[i] - s2[i]);
-}
-
-void	initial_struct(t_data *data) // work
-{
-	data->coins_nbr = 0;
-	data->map_height = 0;
-	data->e_nbr = 0;
-	data->p_nbr = 0;
 }
 
 void	calcul_width_height(t_data *data, char **av, char *str)

@@ -6,38 +6,33 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 17:31:38 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/04 22:59:08 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/05 16:01:16 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-void	check_form(t_data *data, char **av) // work
+void	check_form(t_data *data)
 {
-	int		fd;
-	char	*str;
-	int		i;
+	int	width;
+	int	i;
 
 	i = 0;
-	fd = open(av[1], O_RDWR, 0777);
-	if (fd == -1)
-		clear_exit(data);
-	while (1)
+	width = data->map_width;
+	while (i < data->map_height)
 	{
-		str = get_next_line(fd);
-		if (!str || data->map_width != ft_strlen(str))
+		if (width != ft_strlen(data->map[i]))
 			break ;
 		i++;
-		free(str);
 	}
-	free(str);
-	close(fd);
 	if (i != (data->map_height - 1) || (i == (data->map_height - 1)
 			&& ft_strlen(data->map[data->map_height - 1]) != data->map_width - 1
 			&& data->map_height != 1))
 	{
 		perror("Error : map is not a rectangle");
-		clear_exit(data);
+		free_2d_array(data->map, data->map_height);
+		free(data);
+		exit(1);
 	}
 }
 

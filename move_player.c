@@ -6,13 +6,13 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 11:49:10 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/04 22:59:36 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/05 16:13:49 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-void	go_up(t_data *data) // work
+void	go_up(t_data *data)
 {
 	mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, data->y
 		* TILE_SIZE, data->x * TILE_SIZE);
@@ -40,7 +40,7 @@ void	go_up(t_data *data) // work
 	data->map[data->x][data->y] = 'P';
 }
 
-void	go_down(t_data *data) // work
+void	go_down(t_data *data)
 {
 	mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, data->y
 		* TILE_SIZE, data->x * TILE_SIZE);
@@ -68,7 +68,7 @@ void	go_down(t_data *data) // work
 	data->map[data->x][data->y] = 'P';
 }
 
-void	go_right(t_data *data) // work
+void	go_right(t_data *data)
 {
 	mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, data->y
 		* TILE_SIZE, data->x * TILE_SIZE);
@@ -96,7 +96,7 @@ void	go_right(t_data *data) // work
 	data->map[data->x][data->y] = 'P';
 }
 
-void	go_left(t_data *data) // work
+void	go_left(t_data *data)
 {
 	mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->road, data->y
 		* TILE_SIZE, data->x * TILE_SIZE);
@@ -124,7 +124,7 @@ void	go_left(t_data *data) // work
 	data->map[data->x][data->y] = 'P';
 }
 
-int	handle_key(int keycode, t_data *data) // work
+int	handle_key(int keycode, t_data *data)
 {
 	static int	i = 0;
 

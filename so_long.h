@@ -6,7 +6,7 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 13:14:33 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/04 23:00:43 by shebaz           ###   ########.fr       */
+/*   Updated: 2024/06/05 16:16:33 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
 # include <unistd.h>
 
 # define TILE_SIZE 50 // Size of each tile
-# define WINDOWS_HEIGHT 600
-# define WINDOWS_WIDTH 500
+# define WINDOWS_HEIGHT 900
+# define WINDOWS_WIDTH 300
 
 typedef struct s_data
 {
@@ -58,11 +58,13 @@ int			ft_strncmp(char *s1, char *s2, int n);
 void		check_arg(t_data *data, char **av);
 void		map_2d_array(t_data *data, char **av);
 void		check_borders(t_data *data);
-void		check_form(t_data *data, char **av);
+void		check_form(t_data *data);
 void		check_characters(t_data *data);
 void		check_parameters_number(t_data *data, int i, int j);
 void		check_path(t_data *data);
 void		free_2d_array(char **array, int height);
 void		insert_pos(t_data *data, int x, int y);
+void		picture_loading(t_data *data);
+void		windows_stuff(t_data *data);
 
 #endif
