@@ -298,7 +298,7 @@ Key events (`W A S D`) are caught via `mlx_key_hook`. Each direction function:
 **Samia Hb** — 42 student (`shebaz@student.42.fr`)
 
 - 📅 Project started: May 2024
-- 🎓 School: [42 Network](https://www.42network.org/)
+- 🎓 School: [42 Network/(1337 school)](https://www.42network.org/) 
 
 ---
 
