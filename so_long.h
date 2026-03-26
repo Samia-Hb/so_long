@@ -6,14 +6,14 @@
 /*   By: shebaz <shebaz@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 13:14:33 by shebaz            #+#    #+#             */
-/*   Updated: 2024/06/05 16:16:33 by shebaz           ###   ########.fr       */
+/*   Updated: 2026/03/26 19:20:41 by shebaz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SO_LONG_H
 # define SO_LONG_H
 
-# include "get_next_line/get_next_line.h"
+# include "Include/get_next_line/get_next_line.h"
 # include "minilibx-linux/mlx.h"
 # include <fcntl.h>
 # include <stdio.h>
