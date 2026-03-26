@@ -271,7 +271,7 @@ make
 The map file is read line by line using the custom **get_next_line** implementation. The program first calculates the map dimensions (width × height), then allocates a 2D `char` array and fills it with the map contents, recording the player's starting position and coin count as it goes.
 
 ### 2. Map Validation
-Five sequential checks are performed:
+Six sequential checks are performed:
 1. **File extension** — must end in `.ber`
 2. **Valid characters** — only `0 1 P C E` allowed
 3. **Rectangular form** — every row must have the same length
