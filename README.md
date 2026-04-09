@@ -1,18 +1,15 @@
 <div align="center">
 
 ```
-                          ███████╗ ██████╗       ██╗      ██████╗ ███╗   ██╗ ██████╗
-                          ██╔════╝██╔═══██╗      ██║     ██╔═══██╗████╗  ██║██╔════╝
-                          ███████╗██║   ██║      ██║     ██║   ██║██╔██╗ ██║██║  ███╗
-                          ╚════██║██║   ██║      ██║     ██║   ██║██║╚██╗██║██║   ██║
-                          ███████║╚██████╔╝      ███████╗╚██████╔╝██║ ╚████║╚██████╔╝
-                          ╚══════╝ ╚═════╝       ╚══════╝ ╚═════╝╚═╝  ╚═══╝ ╚═════╝
+                          
+                              So Long               
+
 ```
 
-*A small 2D game built in C with MiniLibX — a 42 School project*
+*A small 2D game built in C with MiniLibX — a 1337 School project*
 
 ![Language](https://img.shields.io/badge/Language-C-blue?style=flat-square&logo=c)
-![School](https://img.shields.io/badge/School-42-black?style=flat-square)
+![School](https://img.shields.io/badge/School-1337-black?style=flat-square)
 ![Graphics](https://img.shields.io/badge/Graphics-MiniLibX-orange?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-Completed-brightgreen?style=flat-square)
 
@@ -295,7 +292,7 @@ Key events (`W A S D`) are caught via `mlx_key_hook`. Each direction function:
 
 ## 👤 Author
 
-**Samia Hb** — 42 student (`shebaz@student.42.fr`)
+**Samia Hb** — 42 Network(1337 coding school) student (`shebaz@student.1337.fr`)
 
 - 📅 Project started: May 2024
 - 🎓 School: [42 Network/(1337 school)](https://www.42network.org/) 
@@ -303,5 +300,5 @@ Key events (`W A S D`) are caught via `mlx_key_hook`. Each direction function:
 ---
 
 <div align="center">
-  <i>Made with ❤️ and a lot of C at 42</i>
+  <i>Made with ❤️ and a lot of C at 1337</i>
 </div>
